@@ -16,10 +16,6 @@ public class Task {
     public String toString() {
         return name;
     }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 }
 enum Status {
     NEW,

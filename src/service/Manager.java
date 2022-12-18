@@ -109,6 +109,17 @@ public class Manager {
         System.out.println("Задача обновлена");
     }
 
+    public void updateEpic(Epic task, int id) {
+        for (Integer element : epics.keySet()) {
+            if (element == id) {
+                epics.put(id, task);
+            }
+        }
+
+        task.changeStatus();
+        System.out.println("Задача обновлена");
+    }
+
     public void removeTask() {
         System.out.println("Введите айди задачи которую хотите удалить");
 
