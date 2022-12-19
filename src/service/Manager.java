@@ -136,7 +136,8 @@ public class Manager {
         for (Integer num : epics.keySet()) {
             if (num == id) {
                 epics.remove(num);
-                System.out.println("Задача удалена");
+                epics.get(num).clearSubTasks();
+                System.out.println("Задача и подзадачи удаленны");
                 return;
             }
         }

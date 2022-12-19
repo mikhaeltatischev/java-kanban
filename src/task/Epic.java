@@ -37,4 +37,8 @@ public class Epic extends Task {
     public void addSubTaskToList(Subtask subtask) {
         subTasks.add(subtask);
     }
+
+    public void clearSubTasks() {
+        subTasks.clear();
+    }
 }
