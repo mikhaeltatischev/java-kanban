@@ -1,6 +1,6 @@
 import service.Manager;
 import task.Epic;
-import task.Sub;
+import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
         Epic newYear = new Epic("Празднование нового года", "Организовать новый год у нас дома");
-        Sub invitations = new Sub("Приглашения", "Пригласить родственников", newYear);
-        Sub buyingFoods = new Sub("Купить еду", "Написать список, сходить в магазин", newYear);
+        Subtask invitations = new Subtask("Приглашения", "Пригласить родственников", newYear);
+        Subtask buyingFoods = new Subtask("Купить еду", "Написать список, сходить в магазин", newYear);
         Epic cleaning = new Epic("Уборка", "Убраться дома");
-        Sub toBegin = new Sub("Начать уборку", "Собраться с силами", cleaning);
+        Subtask toBegin = new Subtask("Начать уборку", "Собраться с силами", cleaning);
         Scanner scanner = new Scanner(System.in);
 
         manager.addEpic(newYear);
@@ -40,13 +40,13 @@ public class Main {
                 manager.getTaskById(id);
             } else if (command == 4) {
                 Task task = createTask("Новая", "Создание новой задачи");
+                manager.addTask(task);
             } else if (command == 5) {
                 manager.updateTask(newYear, 1);
             } else if (command == 6) {
                 manager.removeTask();
             } else if (command == 7) {
-                ArrayList<Sub> list = newYear.subTasks;
-                System.out.println(list);
+                newYear.getSubTasksForEpic();
             }
         }
     }

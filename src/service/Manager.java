@@ -1,7 +1,7 @@
 package service;
 
 import task.Epic;
-import task.Sub;
+import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
@@ -10,24 +10,24 @@ import java.util.Scanner;
 
 public class Manager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Sub> subTasks = new HashMap<>();
+    private HashMap<Integer, Subtask> subTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     Scanner scanner = new Scanner(System.in);
     public static int id = 0;
 
     public void addTask(Task task) {
-        tasks.put(id++, task);
-        task.id = id;
+        tasks.put(id, task);
+        task.setId(id++);
     }
 
-    public void addSub(Sub subTask) {
-        subTasks.put(id++, subTask);
-        subTask.id = id;
+    public void addSub(Subtask subTask) {
+        subTasks.put(id, subTask);
+        subTask.setId(id++);
     }
 
     public void addEpic(Epic epicTask) {
+        epicTask.setId(id);
         epics.put(id++, epicTask);
-        epicTask.id = id;
     }
 
     public ArrayList<Task> getAllTasks() {
@@ -41,7 +41,7 @@ public class Manager {
             list.add(task);
         }
 
-        for (Sub task : subTasks.values()) {
+        for (Subtask task : subTasks.values()) {
             list.add(task);
         }
 
@@ -99,7 +99,7 @@ public class Manager {
         System.out.println("Задача обновлена");
     }
 
-    public void updateSub(Sub task, int id) {
+    public void updateSub(Subtask task, int id) {
         for (Integer element : subTasks.keySet()) {
             if (element == id) {
                 subTasks.put(id, task);
@@ -148,5 +148,23 @@ public class Manager {
                 return;
             }
         }
+    }
+
+    public void changeStatusTaskToInProgress(Task task) {
+        task.changeStatusToInProgress();
+    }
+
+    public void changeStatusSubtaskToInProgress(Subtask subtask) {
+        subtask.changeStatusToInProgress();
+        subtask.getEpicTask().changeStatus();
+    }
+
+    public void changeStatusTaskDone(Task task) {
+        task.changeStatusToDone();
+    }
+
+    public void changeStatusSubtaskToDone(Subtask subtask) {
+        subtask.changeStatusToDone();
+        subtask.getEpicTask().changeStatus();
     }
 }

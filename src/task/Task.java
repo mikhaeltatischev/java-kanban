@@ -1,7 +1,7 @@
 package task;
 
 public class Task {
-    public int id;
+    protected int id;
     protected String name;
     protected String description;
     protected Status status;
@@ -16,9 +16,16 @@ public class Task {
     public String toString() {
         return name;
     }
-}
-enum Status {
-    NEW,
-    IN_PROGRESS,
-    DONE
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void changeStatusToInProgress() {
+        this.status = Status.IN_PROGRESS;
+    }
+
+    public void changeStatusToDone() {
+        this.status = Status.DONE;
+    }
 }
