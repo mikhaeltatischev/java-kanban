@@ -13,7 +13,7 @@ public class Manager {
     private HashMap<Integer, Subtask> subTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     Scanner scanner = new Scanner(System.in);
-    public static int id = 0;
+    public static int id = 1;
 
     public void addTask(Task task) {
         tasks.put(id, task);
@@ -135,8 +135,11 @@ public class Manager {
 
         for (Integer num : epics.keySet()) {
             if (num == id) {
+                ArrayList<Subtask> subtasksForEpic = epics.get(num).getSubTasksForEpic();
+                for (Subtask subtask : subtasksForEpic) {
+                    subTasks.remove(subtask.getId());
+                }
                 epics.remove(num);
-                epics.get(num).clearSubTasks();
                 System.out.println("Задача и подзадачи удаленны");
                 return;
             }
