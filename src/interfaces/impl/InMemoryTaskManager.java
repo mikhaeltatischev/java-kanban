@@ -1,35 +1,50 @@
-package service;
+package interfaces.impl;
 
+import interfaces.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Subtask> subTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
     Scanner scanner = new Scanner(System.in);
     public static int id = 1;
+    private List<Task> listViewedTasks = new ArrayList<>();
 
+    private void addViewedTask(Task task) {
+        listViewedTasks.add(task);
+
+        if (listViewedTasks.size() > 10) {
+            listViewedTasks.remove(0);
+        }
+    }
+
+    @Override
     public void addTask(Task task) {
         tasks.put(id, task);
         task.setId(id++);
     }
 
+    @Override
     public void addSub(Subtask subTask) {
         subTasks.put(id, subTask);
         subTask.setId(id++);
     }
 
+    @Override
     public void addEpic(Epic epicTask) {
         epicTask.setId(id);
         epics.put(id++, epicTask);
     }
 
+    @Override
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> list = new ArrayList<>();
 
@@ -52,6 +67,7 @@ public class Manager {
         return list;
     }
 
+    @Override
     public void removeAllTasks() {
         tasks.clear();
         epics.clear();
@@ -59,24 +75,28 @@ public class Manager {
         System.out.println("Все задачи удаленны");
     }
 
+    @Override
     public Task getTaskById(int id) {
         Task taskById = null;
 
-        for (Integer index : tasks.keySet()) {
-            if (index == id) {
-                taskById = tasks.get(index);
+        for (Task task : tasks.values()) {
+            if (task.getId() == id) {
+                taskById = tasks.get(task.getId());
+                addViewedTask(task);
             }
         }
 
-        for (Integer index : epics.keySet()) {
-            if (index == id) {
-                taskById = epics.get(index);
+        for (Epic task : epics.values()) {
+            if (task.getId() == id) {
+                taskById = epics.get(task.getId());
+                addViewedTask(task);
             }
         }
 
-        for (Integer index : subTasks.keySet()) {
-            if (index == id) {
-                taskById = subTasks.get(index);
+        for (Subtask task : subTasks.values()) {
+            if (task.getId() == id) {
+                taskById = subTasks.get(task.getId());
+                addViewedTask(task);
             }
         }
 
@@ -89,6 +109,7 @@ public class Manager {
         return taskById;
     }
 
+    @Override
     public void updateTask(Task task, int id) {
         for (Integer element : tasks.keySet()) {
             if (element == id) {
@@ -99,6 +120,7 @@ public class Manager {
         System.out.println("Задача обновлена");
     }
 
+    @Override
     public void updateSub(Subtask task, int id) {
         for (Integer element : subTasks.keySet()) {
             if (element == id) {
@@ -109,6 +131,7 @@ public class Manager {
         System.out.println("Задача обновлена");
     }
 
+    @Override
     public void updateEpic(Epic task, int id) {
         for (Integer element : epics.keySet()) {
             if (element == id) {
@@ -120,6 +143,7 @@ public class Manager {
         System.out.println("Задача обновлена");
     }
 
+    @Override
     public void removeTask() {
         System.out.println("Введите айди задачи которую хотите удалить");
 
@@ -154,21 +178,34 @@ public class Manager {
         }
     }
 
+    @Override
     public void changeStatusTaskToInProgress(Task task) {
         task.changeStatusToInProgress();
     }
 
+    @Override
     public void changeStatusSubtaskToInProgress(Subtask subtask) {
         subtask.changeStatusToInProgress();
         subtask.getEpicTask().changeStatus();
     }
 
+    @Override
     public void changeStatusTaskDone(Task task) {
         task.changeStatusToDone();
     }
 
+    @Override
     public void changeStatusSubtaskToDone(Subtask subtask) {
         subtask.changeStatusToDone();
         subtask.getEpicTask().changeStatus();
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        for (Task task : listViewedTasks) {
+            System.out.println(task.getName());
+        }
+
+        return listViewedTasks;
     }
 }

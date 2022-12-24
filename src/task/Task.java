@@ -32,4 +32,8 @@ public class Task {
     public void changeStatusToDone() {
         this.status = Status.DONE;
     }
+
+    public String getName() {
+        return name;
+    }
 }

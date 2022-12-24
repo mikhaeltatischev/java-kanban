@@ -1,4 +1,4 @@
-import service.Manager;
+import interfaces.impl.InMemoryTaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
         Epic newYear = new Epic("Празднование нового года", "Организовать новый год у нас дома");
         Subtask invitations = new Subtask("Приглашения", "Пригласить родственников", newYear);
         Subtask buyingFoods = new Subtask("Купить еду", "Написать список, сходить в магазин", newYear);
@@ -47,6 +47,8 @@ public class Main {
                 manager.removeTask();
             } else if (command == 7) {
                 newYear.getSubTasksForEpic();
+            } else if (command == 8) {
+                manager.getHistory();
             }
         }
     }
@@ -60,6 +62,7 @@ public class Main {
         System.out.println("5. Обновить задачу;");
         System.out.println("6. Удаление задачи по идентификатору;");
         System.out.println("7. Получить список подзадач для эпика;");
+        System.out.println("8. Получить 10 последних просмотренных задач.");
     }
 
     public static Task createTask(String name, String description) {
