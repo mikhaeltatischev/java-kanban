@@ -36,6 +36,4 @@ public interface TaskManager {
     void changeStatusTaskDone(Task task);
 
     void changeStatusSubtaskToDone(Subtask subtask);
-
-    List<Task> getHistory();
 }

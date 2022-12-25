@@ -1,4 +1,6 @@
+import interfaces.TaskManager;
 import interfaces.impl.InMemoryTaskManager;
+import interfaces.impl.Managers;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -8,7 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager manager = new InMemoryTaskManager();
+        TaskManager manager = new InMemoryTaskManager();
         Epic newYear = new Epic("Празднование нового года", "Организовать новый год у нас дома");
         Subtask invitations = new Subtask("Приглашения", "Пригласить родственников", newYear);
         Subtask buyingFoods = new Subtask("Купить еду", "Написать список, сходить в магазин", newYear);
@@ -48,7 +50,7 @@ public class Main {
             } else if (command == 7) {
                 newYear.getSubTasksForEpic();
             } else if (command == 8) {
-                manager.getHistory();
+                Managers.getDefaultHistory().getHistory();
             }
         }
     }

@@ -7,24 +7,15 @@ import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
 
+
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Subtask> subTasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
-    Scanner scanner = new Scanner(System.in);
     public static int id = 1;
-    private List<Task> listViewedTasks = new ArrayList<>();
-
-    private void addViewedTask(Task task) {
-        listViewedTasks.add(task);
-
-        if (listViewedTasks.size() > 10) {
-            listViewedTasks.remove(0);
-        }
-    }
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    Scanner scanner = new Scanner(System.in);
 
     @Override
     public void addTask(Task task) {
@@ -82,21 +73,21 @@ public class InMemoryTaskManager implements TaskManager {
         for (Task task : tasks.values()) {
             if (task.getId() == id) {
                 taskById = tasks.get(task.getId());
-                addViewedTask(task);
+                Managers.getDefaultHistory().add(task);
             }
         }
 
         for (Epic task : epics.values()) {
             if (task.getId() == id) {
                 taskById = epics.get(task.getId());
-                addViewedTask(task);
+                Managers.getDefaultHistory().add(task);
             }
         }
 
         for (Subtask task : subTasks.values()) {
             if (task.getId() == id) {
                 taskById = subTasks.get(task.getId());
-                addViewedTask(task);
+                Managers.getDefaultHistory().add(task);
             }
         }
 
@@ -198,14 +189,5 @@ public class InMemoryTaskManager implements TaskManager {
     public void changeStatusSubtaskToDone(Subtask subtask) {
         subtask.changeStatusToDone();
         subtask.getEpicTask().changeStatus();
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        for (Task task : listViewedTasks) {
-            System.out.println(task.getName());
-        }
-
-        return listViewedTasks;
     }
 }
