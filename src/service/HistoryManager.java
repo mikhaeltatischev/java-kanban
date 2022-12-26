@@ -1,4 +1,4 @@
-package interfaces;
+package service;
 
 import task.Task;
 

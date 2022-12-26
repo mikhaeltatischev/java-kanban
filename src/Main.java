@@ -1,11 +1,10 @@
-import interfaces.TaskManager;
-import interfaces.impl.InMemoryTaskManager;
-import interfaces.impl.Managers;
+import service.TaskManager;
+import service.impl.InMemoryTaskManager;
+import service.impl.Managers;
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -46,7 +45,8 @@ public class Main {
             } else if (command == 5) {
                 manager.updateTask(newYear, 1);
             } else if (command == 6) {
-                manager.removeTask();
+                int id = scanner.nextInt();
+                manager.removeTask(id);
             } else if (command == 7) {
                 newYear.getSubTasksForEpic();
             } else if (command == 8) {

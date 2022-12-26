@@ -1,6 +1,6 @@
-package interfaces.impl;
+package service.impl;
 
-import interfaces.TaskManager;
+import service.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -101,68 +101,58 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task, int id) {
-        for (Integer element : tasks.keySet()) {
-            if (element == id) {
-                tasks.put(id, task);
-            }
+    public void updateTask(Task task, int taskId) {
+        if (tasks.containsValue(taskId)) {
+            tasks.put(taskId, task);
         }
 
         System.out.println("Задача обновлена");
     }
 
     @Override
-    public void updateSub(Subtask task, int id) {
-        for (Integer element : subTasks.keySet()) {
-            if (element == id) {
-                subTasks.put(id, task);
-            }
+    public void updateSub(Subtask subtask, int subtaskId) {
+        if (subTasks.containsValue(subtaskId)) {
+            subTasks.put(subtaskId, subtask);
         }
 
         System.out.println("Задача обновлена");
     }
 
     @Override
-    public void updateEpic(Epic task, int id) {
-        for (Integer element : epics.keySet()) {
-            if (element == id) {
-                epics.put(id, task);
-            }
+    public void updateEpic(Epic epic, int epicId) {
+        if (epics.containsValue(epicId)) {
+            epics.put(epicId, epic);
         }
 
-        task.changeStatus();
+        epic.changeStatus();
         System.out.println("Задача обновлена");
     }
 
     @Override
-    public void removeTask() {
-        System.out.println("Введите айди задачи которую хотите удалить");
-
-        Integer id = scanner.nextInt();
-
-        for (Integer num : tasks.keySet()) {
-            if (num == id) {
-                tasks.remove(num);
+    public void removeTask(int removeTaskId) {
+        for (Integer id : tasks.keySet()) {
+            if (id == removeTaskId) {
+                tasks.remove(id);
                 System.out.println("Задача удалена");
                 return;
             }
         }
 
-        for (Integer num : epics.keySet()) {
-            if (num == id) {
-                ArrayList<Subtask> subtasksForEpic = epics.get(num).getSubTasksForEpic();
+        for (Integer id : epics.keySet()) {
+            if (id == removeTaskId) {
+                ArrayList<Subtask> subtasksForEpic = epics.get(id).getSubTasksForEpic();
                 for (Subtask subtask : subtasksForEpic) {
                     subTasks.remove(subtask.getId());
                 }
-                epics.remove(num);
+                epics.remove(id);
                 System.out.println("Задача и подзадачи удаленны");
                 return;
             }
         }
 
-        for (Integer num : subTasks.keySet()) {
-            if (num == id) {
-                subTasks.remove(num);
+        for (Integer id : subTasks.keySet()) {
+            if (id == removeTaskId) {
+                subTasks.remove(id);
                 System.out.println("Задача удалена");
                 return;
             }

@@ -1,11 +1,10 @@
-package interfaces;
+package service;
 
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public interface TaskManager {
 
@@ -27,7 +26,7 @@ public interface TaskManager {
 
     void updateEpic(Epic task, int id);
 
-    void removeTask();
+    void removeTask(int id);
 
     void changeStatusTaskToInProgress(Task task);
 
