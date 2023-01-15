@@ -26,4 +26,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         return lastViewedTasks;
     }
+
+    public void remove(int id) {
+        
+    }
 }
