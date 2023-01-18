@@ -1,5 +1,6 @@
 package service.impl;
 
+import service.HistoryManager;
 import service.TaskManager;
 import task.Epic;
 import task.Subtask;
@@ -7,7 +8,6 @@ import task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -15,7 +15,11 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
-    Scanner scanner = new Scanner(System.in);
+    private HistoryManager historyManager = Managers.getDefaultHistory();
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
     @Override
     public void addTask(Task task) {
@@ -63,6 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.clear();
         epics.clear();
         subTasks.clear();
+        historyManager.removeAllTasks();
         System.out.println("Все задачи удаленны");
     }
 
@@ -73,21 +78,24 @@ public class InMemoryTaskManager implements TaskManager {
         for (Task task : tasks.values()) {
             if (task.getId() == id) {
                 taskById = tasks.get(task.getId());
-                Managers.getDefaultHistory().add(task);
+                historyManager.add(task);
+                return taskById;
             }
         }
 
         for (Epic task : epics.values()) {
             if (task.getId() == id) {
                 taskById = epics.get(task.getId());
-                Managers.getDefaultHistory().add(task);
+                historyManager.add(task);
+                return taskById;
             }
         }
 
         for (Subtask task : subTasks.values()) {
             if (task.getId() == id) {
                 taskById = subTasks.get(task.getId());
-                Managers.getDefaultHistory().add(task);
+                historyManager.add(task);
+                return taskById;
             }
         }
 
@@ -133,6 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer id : tasks.keySet()) {
             if (id == removeTaskId) {
                 tasks.remove(id);
+                historyManager.remove(id);
                 System.out.println("Задача удалена");
                 return;
             }
@@ -143,8 +152,10 @@ public class InMemoryTaskManager implements TaskManager {
                 ArrayList<Subtask> subtasksForEpic = epics.get(id).getSubTasksForEpic();
                 for (Subtask subtask : subtasksForEpic) {
                     subTasks.remove(subtask.getId());
+                    historyManager.remove(subtask.getId());
                 }
                 epics.remove(id);
+                historyManager.remove(id);
                 System.out.println("Задача и подзадачи удаленны");
                 return;
             }
@@ -153,6 +164,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer id : subTasks.keySet()) {
             if (id == removeTaskId) {
                 subTasks.remove(id);
+                historyManager.remove(id);
                 System.out.println("Задача удалена");
                 return;
             }

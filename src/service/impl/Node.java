@@ -2,12 +2,12 @@ package service.impl;
 
 import task.Task;
 
-public class Node<T> {
-    public T task;
-    public Node<T> nextNode;
-    public Node<T> prevNode;
+public class Node {
+    public Task task;
+    public Node nextNode;
+    public Node prevNode;
 
-    public Node(T task) {
+    public Node(Task task) {
         this.task = task;
         nextNode = null;
         prevNode = null;

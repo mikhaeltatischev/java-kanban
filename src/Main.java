@@ -1,4 +1,6 @@
+import service.HistoryManager;
 import service.TaskManager;
+import service.impl.InMemoryHistoryManager;
 import service.impl.InMemoryTaskManager;
 import service.impl.Managers;
 import task.Epic;
@@ -10,11 +12,17 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         TaskManager manager = new InMemoryTaskManager();
-        Epic newYear = new Epic("Празднование нового года", "Организовать новый год у нас дома");
-        Subtask invitations = new Subtask("Приглашения", "Пригласить родственников", newYear);
-        Subtask buyingFoods = new Subtask("Купить еду", "Написать список, сходить в магазин", newYear);
-        Epic cleaning = new Epic("Уборка", "Убраться дома");
-        Subtask toBegin = new Subtask("Начать уборку", "Собраться с силами", cleaning);
+        Epic newYear = new Epic("1", "Организовать новый год у нас дома");
+        Epic cleaning = new Epic("2", "Убраться дома");
+        Subtask invitations = new Subtask("3", "Пригласить родственников", newYear);
+        Subtask buyingFoods = new Subtask("4", "Написать список, сходить в магазин", newYear);
+        Subtask toBegin = new Subtask("5", "Приготовить еду и накрыть стол", newYear);
+        Subtask toBegin2 = new Subtask("6", "Приготовить еду и накрыть стол", newYear);
+        Subtask toBegin3 = new Subtask("7", "Приготовить еду и накрыть стол", newYear);
+        Subtask toBegin4 = new Subtask("8", "Приготовить еду и накрыть стол", newYear);
+        Subtask toBegin5 = new Subtask("9", "Приготовить еду и накрыть стол", newYear);
+        Subtask toBegin6 = new Subtask("10", "Приготовить еду и накрыть стол", newYear);
+        Subtask toBegin7 = new Subtask("11", "Приготовить еду и накрыть стол", newYear);
         Scanner scanner = new Scanner(System.in);
 
         manager.addEpic(newYear);
@@ -22,6 +30,12 @@ public class Main {
         manager.addSub(invitations);
         manager.addSub(buyingFoods);
         manager.addSub(toBegin);
+        manager.addSub(toBegin2);
+        manager.addSub(toBegin3);
+        manager.addSub(toBegin4);
+        manager.addSub(toBegin5);
+        manager.addSub(toBegin6);
+        manager.addSub(toBegin7);
 
         System.out.println("Трекер задач");
 
@@ -45,12 +59,13 @@ public class Main {
             } else if (command == 5) {
                 manager.updateTask(newYear, 1);
             } else if (command == 6) {
+                System.out.println("Введите идентификатор");
                 int id = scanner.nextInt();
                 manager.removeTask(id);
             } else if (command == 7) {
                 newYear.getSubTasksForEpic();
             } else if (command == 8) {
-                Managers.getDefaultHistory().getHistory();
+                System.out.println(manager.getHistoryManager().getHistory());
             }
         }
     }
