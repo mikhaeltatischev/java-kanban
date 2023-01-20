@@ -1,6 +1,4 @@
-package service.impl;
-
-import task.Task;
+package model;
 
 public class Node {
     public Task task;

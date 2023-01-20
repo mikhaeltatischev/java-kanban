@@ -1,11 +1,8 @@
-import service.HistoryManager;
 import service.TaskManager;
-import service.impl.InMemoryHistoryManager;
 import service.impl.InMemoryTaskManager;
-import service.impl.Managers;
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 
 import java.util.Scanner;
 

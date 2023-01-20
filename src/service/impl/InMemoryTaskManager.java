@@ -2,16 +2,16 @@ package service.impl;
 
 import service.HistoryManager;
 import service.TaskManager;
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    public static int id = 1;
+    private static int id = 1;
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
