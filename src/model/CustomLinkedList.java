@@ -63,7 +63,7 @@ public class CustomLinkedList {
             nodeToBeRemoved.nextNode = null;
         }
 
-        nodes.remove(nodeToBeRemoved);
+        nodes.remove(nodeToBeRemoved.task.getId());
         size--;
 
         return nodeToBeRemoved;
@@ -75,6 +75,10 @@ public class CustomLinkedList {
 
     public void tailToNull() {
         tail = null;
+    }
+
+    public Node getHead() {
+        return head;
     }
 }
 
