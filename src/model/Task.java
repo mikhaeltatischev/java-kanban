@@ -5,11 +5,21 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
+    protected TaskTypes type;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         status = Status.NEW;
+        type = TaskTypes.TASK;
+    }
+
+    public Task(String name, String description, int id) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        status = Status.NEW;
+        type = TaskTypes.TASK;
     }
 
     @Override
@@ -35,5 +45,21 @@ public class Task {
 
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type + "";
+    }
+
+    public String getStatus() {
+        return status + "";
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getEpicId() {
+        return -1;
     }
 }

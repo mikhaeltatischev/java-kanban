@@ -76,7 +76,7 @@ public class Main {
         System.out.println("5. Обновить задачу;");
         System.out.println("6. Удаление задачи по идентификатору;");
         System.out.println("7. Получить список подзадач для эпика;");
-        System.out.println("8. Получить 10 последних просмотренных задач.");
+        System.out.println("8. Получить историю задач.");
     }
 
     public static Task createTask(String name, String description) {
