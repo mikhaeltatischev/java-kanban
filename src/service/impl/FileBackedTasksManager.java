@@ -3,12 +3,10 @@ package service.impl;
 import model.Epic;
 import model.Subtask;
 import model.Task;
+import model.TaskTypes;
 import service.HistoryManager;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +16,7 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private Path tasksFile;
+    private static final String HOME = System.getProperty("user.home");
 
     public FileBackedTasksManager(String file) throws IOException {
         Path path = Paths.get(file);
@@ -30,13 +29,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) throws IOException {
-        // Знаю что это ужасно, в каких-то местах просто чудом работает, буду благодарен за хорошую критику
-
         Epic task1 = new Epic("1", "task1");
         Task task2 = new Task("2", "task2");
         Subtask task3 = new Subtask("3", "task3", task1);
 
-        String path = "C:\\Users\\tatis\\IdeaProjects\\java-kanban\\src\\file\\tasks.txt";
+        String path = "src\\file\\tasks.txt";
 
         FileBackedTasksManager manager1 = new FileBackedTasksManager(path);
 
@@ -48,6 +45,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager1.getTaskById(2);
         manager1.getTaskById(3);
         manager1.getTaskById(1);
+        manager1.getTaskById(1);
+        manager1.getTaskById(3);
+        manager1.getTaskById(1);
+        manager1.getTaskById(2);
 
         System.out.println(manager1.getHistoryManager().getHistory());
 
@@ -79,9 +80,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             Task task = fileBackedTasksManager.fromString(lines.get(i));
 
-            if (task.getType().equals("SUBTASK")) {
+            if (task.getType().equals(TaskTypes.SUBTASK.name())) {
                 fileBackedTasksManager.subTasks.put(task.getId(), (Subtask) task);
-            } else if (task.getType().equals("EPIC")) {
+            } else if (task.getType().equals(TaskTypes.EPIC.name())) {
                 fileBackedTasksManager.epics.put(task.getId(), (Epic) task);
             } else {
                 fileBackedTasksManager.tasks.put(task.getId(), task);
@@ -115,14 +116,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private static List<Integer> historyFromString(String value) {
-        List<Integer> listOfId = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
         String[] history = value.split(",");
 
         for (String id : history) {
-            listOfId.add(Integer.parseInt(id));
+            ids.add(Integer.parseInt(id));
         }
 
-        return listOfId;
+        return ids;
     }
 
     private void save() {
@@ -165,14 +166,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private Task fromString(String value) {
         String[] array = value.split(",");
+        String name = array[2];
+        String description = array[4];
+        int id = Integer.parseInt(array[0]);
+        String type = array[1];
 
-        if (array[1].equals("SUBTASK")) {
-            Epic current = super.getEpicId(Integer.parseInt(array[5]));
-            return new Subtask(array[2], array[4], current, Integer.parseInt(array[0]));
-        } else if (array[1].equals("EPIC")) {
-            return new Epic(array[2], array[4], Integer.parseInt(array[0]));
+        if (type.equals(TaskTypes.SUBTASK.name())) {
+            int epicId = Integer.parseInt(array[5]);
+            Epic current = super.getEpicId(epicId);
+            return new Subtask(name, description, current, id);
+        } else if (array[1].equals(TaskTypes.EPIC.name())) {
+            return new Epic(name, description, id);
         } else {
-            return new Task(array[2], array[4], Integer.parseInt(array[0]));
+            return new Task(name, description, id);
         }
     }
 
