@@ -16,7 +16,6 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private Path tasksFile;
-    private static final String HOME = System.getProperty("user.home");
 
     public FileBackedTasksManager(String file) throws IOException {
         Path path = Paths.get(file);
@@ -166,13 +165,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private Task fromString(String value) {
         String[] array = value.split(",");
-        String name = array[2];
-        String description = array[4];
-        int id = Integer.parseInt(array[0]);
-        String type = array[1];
+
+        final int NAME_INDEX = 2;
+        final int DESCRIPTION_INDEX = 4;
+        final int ID_INDEX = 0;
+        final int TYPE_INDEX = 1;
+
+        String name = array[NAME_INDEX];
+        String description = array[DESCRIPTION_INDEX];
+        int id = Integer.parseInt(array[ID_INDEX]);
+        String type = array[TYPE_INDEX];
 
         if (type.equals(TaskTypes.SUBTASK.name())) {
-            int epicId = Integer.parseInt(array[5]);
+            final int EPIC_ID_INDEX = 5;
+            int epicId = Integer.parseInt(array[EPIC_ID_INDEX]);
             Epic current = super.getEpicId(epicId);
             return new Subtask(name, description, current, id);
         } else if (array[1].equals(TaskTypes.EPIC.name())) {
