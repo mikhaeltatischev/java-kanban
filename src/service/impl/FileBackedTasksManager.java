@@ -6,7 +6,10 @@ import model.Task;
 import model.TaskTypes;
 import service.HistoryManager;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
+    final int NAME_INDEX = 2;
+    final int DESCRIPTION_INDEX = 4;
+    final int ID_INDEX = 0;
+    final int TYPE_INDEX = 1;
+
     private Path tasksFile;
 
     public FileBackedTasksManager(String file) throws IOException {
@@ -110,7 +118,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         result.deleteCharAt(result.length() - 1);
-
         return String.valueOf(result);
     }
 
@@ -165,11 +172,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private Task fromString(String value) {
         String[] array = value.split(",");
-
-        final int NAME_INDEX = 2;
-        final int DESCRIPTION_INDEX = 4;
-        final int ID_INDEX = 0;
-        final int TYPE_INDEX = 1;
 
         String name = array[NAME_INDEX];
         String description = array[DESCRIPTION_INDEX];
