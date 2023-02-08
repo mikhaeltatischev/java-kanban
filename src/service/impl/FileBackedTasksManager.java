@@ -18,10 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    final int NAME_INDEX = 2;
-    final int DESCRIPTION_INDEX = 4;
     final int ID_INDEX = 0;
     final int TYPE_INDEX = 1;
+    final int NAME_INDEX = 2;
+    final int DESCRIPTION_INDEX = 4;
+    final int EPIC_ID_INDEX = 5;
 
     private Path tasksFile;
 
@@ -179,11 +180,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String type = array[TYPE_INDEX];
 
         if (type.equals(TaskTypes.SUBTASK.name())) {
-            final int EPIC_ID_INDEX = 5;
             int epicId = Integer.parseInt(array[EPIC_ID_INDEX]);
             Epic current = super.getEpicId(epicId);
             return new Subtask(name, description, current, id);
-        } else if (array[1].equals(TaskTypes.EPIC.name())) {
+        } else if (type.equals(TaskTypes.EPIC.name())) {
             return new Epic(name, description, id);
         } else {
             return new Task(name, description, id);
