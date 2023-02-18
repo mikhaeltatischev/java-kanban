@@ -22,21 +22,24 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public int addTask(Task task) {
         tasks.put(id, task);
         task.setId(id++);
+        return task.getId();
     }
 
     @Override
-    public void addSub(Subtask subTask) {
+    public int addSub(Subtask subTask) {
         subTasks.put(id, subTask);
         subTask.setId(id++);
+        return subTask.getId();
     }
 
     @Override
-    public void addEpic(Epic epicTask) {
+    public int addEpic(Epic epicTask) {
         epicTask.setId(id);
         epics.put(id++, epicTask);
+        return epicTask.getId();
     }
 
     @Override
@@ -171,31 +174,21 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    public void changeStatusTaskToInProgress(Task task) {
-        task.changeStatusToInProgress();
-    }
-
-    @Override
-    public void changeStatusSubtaskToInProgress(Subtask subtask) {
-        subtask.changeStatusToInProgress();
-        subtask.getEpicTask().changeStatus();
-    }
-
-    @Override
-    public void changeStatusTaskDone(Task task) {
-        task.changeStatusToDone();
-    }
-
-    @Override
-    public void changeStatusSubtaskToDone(Subtask subtask) {
-        subtask.changeStatusToDone();
-        subtask.getEpicTask().changeStatus();
-    }
-
     public Epic getEpicId(int id) {
         Epic task = epics.get(id);
 
         return task;
+    }
+
+    public HashMap<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    public HashMap<Integer, Task> getTasks() {
+        return tasks;
+    }
+
+    public HashMap<Integer, Subtask> getSubTasks() {
+        return subTasks;
     }
 }

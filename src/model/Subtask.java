@@ -25,4 +25,20 @@ public class Subtask extends Task {
     public int getEpicId() {
         return epicTask.getId();
     }
+
+    @Override
+    public void changeStatusToInProgress() {
+        super.changeStatusToInProgress();
+        epicTask.changeStatus();
+    }
+
+    public void changeStatusToDone() {
+        super.changeStatusToDone();
+        epicTask.changeStatus();
+    }
+
+    public void changeStatusToNew() {
+        super.changeStatusToNew();
+        epicTask.changeStatus();
+    }
 }

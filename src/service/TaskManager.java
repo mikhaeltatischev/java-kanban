@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 public interface TaskManager {
 
-    void addTask(Task task);
+    int addTask(Task task);
 
-    void addSub(Subtask subTask);
+    int addSub(Subtask subTask);
 
-    void addEpic(Epic epicTask);
+    int addEpic(Epic epicTask);
 
     ArrayList<Task> getAllTasks();
 
@@ -27,14 +27,6 @@ public interface TaskManager {
     void updateEpic(Epic task, int id);
 
     void removeTask(int id);
-
-    void changeStatusTaskToInProgress(Task task);
-
-    void changeStatusSubtaskToInProgress(Subtask subtask);
-
-    void changeStatusTaskDone(Task task);
-
-    void changeStatusSubtaskToDone(Subtask subtask);
 
     HistoryManager getHistoryManager();
 }

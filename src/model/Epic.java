@@ -1,9 +1,11 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
     private ArrayList<Subtask> subTasks;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -17,24 +19,79 @@ public class Epic extends Task {
         type = TaskTypes.EPIC;
     }
 
+    @Override
+    public LocalDateTime getStartTime() {
+        try {
+            startTime = subTasks.get(0).getStartTime();
+
+            for (Subtask sub : subTasks) {
+                if (startTime.isAfter(sub.getStartTime())) {
+                    startTime = sub.getStartTime();
+                }
+            }
+        } catch (NullPointerException e) {
+            e.getMessage();
+        } catch (IndexOutOfBoundsException e) {
+            e.getMessage();
+            startTime = LocalDateTime.of(01, 01, 01, 01, 01, 01);
+        }
+
+        return startTime;
+    }
+
+    @Override
+    public long getDuration() {
+        duration = calculateDuration();
+
+        return duration;
+    }
+
+    public long calculateDuration() {
+        long time = 0;
+        for (Subtask sub : subTasks) {
+            time += sub.getDuration();
+        }
+
+        return time;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public LocalDateTime calculateEndTime() {
+        try {
+            endTime = startTime.plusMinutes(getDuration());
+        } catch (NullPointerException e) {
+            e.getMessage();
+        }
+
+        return endTime;
+    }
+
     public void changeStatus() {
         int newStatusCounter = 0;
         int inProgressStatusCounter = 0;
         int doneStatusCounter = 0;
 
         for (Subtask sub : subTasks) {
-            if (sub.status == Status.NEW) {
+            if (sub.getStatus().equals(Status.NEW)) {
                 newStatusCounter++;
-            } else if (sub.status == Status.DONE) {
+            } else if (sub.getStatus().equals(Status.DONE)) {
                 doneStatusCounter++;
-            } else inProgressStatusCounter++;
+            } else {
+                inProgressStatusCounter++;
+            }
         }
 
         if (newStatusCounter == subTasks.size()) {
-            status = Status.NEW;
+            changeStatusToNew();
         } else if (doneStatusCounter == subTasks.size()) {
-            status = Status.DONE;
-        } else status = Status.IN_PROGRESS;
+            changeStatusToDone();
+        } else {
+            changeStatusToInProgress();
+        }
     }
 
     public ArrayList<Subtask> getSubTasksForEpic() {

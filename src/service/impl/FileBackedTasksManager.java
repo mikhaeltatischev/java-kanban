@@ -1,106 +1,109 @@
 package service.impl;
 
-import model.Epic;
-import model.Subtask;
-import model.Task;
-import model.TaskTypes;
+import exception.IntersectionIntervalException;
+import exception.ManagerSaveException;
+import model.*;
 import service.HistoryManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     final int ID_INDEX = 0;
     final int TYPE_INDEX = 1;
     final int NAME_INDEX = 2;
+    final int STATUS_INDEX = 3;
     final int DESCRIPTION_INDEX = 4;
     final int EPIC_ID_INDEX = 5;
+    final int START_TIME_INDEX = 6;
+    final int DURATION_INDEX = 7;
+    final int END_TIME_INDEX = 8;
 
     private Path tasksFile;
+    private TreeSet<Task> treeSet = new TreeSet<>();
 
     public FileBackedTasksManager(String file) throws IOException {
         Path path = Paths.get(file);
-
-        try {
-            tasksFile = Files.createFile(path);
-        } catch (FileAlreadyExistsException e) {
-            tasksFile = path;
+        if (!Files.exists(path)) {
+            throw new ManagerSaveException();
         }
+        tasksFile = path;
     }
 
-    public static void main(String[] args) throws IOException {
-        Epic task1 = new Epic("1", "task1");
-        Task task2 = new Task("2", "task2");
-        Subtask task3 = new Subtask("3", "task3", task1);
+    public static void main(String[] args) throws IOException, IntersectionIntervalException {
+        String path = "src\\file\\path.txt";
+        Task task = new Task("task", "task");
+        Task task1 = new Task("task1", "task1");
 
-        String path = "src\\file\\tasks.txt";
+        FileBackedTasksManager tasksManager = new FileBackedTasksManager(path);
 
-        FileBackedTasksManager manager1 = new FileBackedTasksManager(path);
+        task.setDuration(20L);
+        task1.setDuration(30L);
 
-        manager1.addEpic(task1);
-        manager1.addTask(task2);
-        manager1.addSub(task3);
+        task.setStartTime(LocalDateTime.now());
+        task1.setStartTime(LocalDateTime.now().plusMinutes(10L));
 
-        manager1.getTaskById(1);
-        manager1.getTaskById(2);
-        manager1.getTaskById(3);
-        manager1.getTaskById(1);
-        manager1.getTaskById(1);
-        manager1.getTaskById(3);
-        manager1.getTaskById(1);
-        manager1.getTaskById(2);
-
-        System.out.println(manager1.getHistoryManager().getHistory());
-
-        FileBackedTasksManager manager2 = loadFromFile(path);
-
-        System.out.println(manager2.getHistoryManager().getHistory());
-        manager2.getTaskById(3);
-        manager2.getTaskById(2);
-        manager2.getTaskById(1);
-        System.out.println(manager2.getHistoryManager().getHistory());
-
+        tasksManager.addTask(task);
+        tasksManager.addTask(task1);
     }
 
-    private static FileBackedTasksManager loadFromFile(String file) throws IOException {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
-        FileReader reader = new FileReader(String.valueOf(file));
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        List<String> lines = new ArrayList<>();
+    public static FileBackedTasksManager loadFromFile(String file) throws IOException {
+        FileBackedTasksManager fileBackedTasksManager;
 
-        while (bufferedReader.ready()) {
-            lines.add(bufferedReader.readLine());
-        }
+        try (FileReader reader = new FileReader(String.valueOf(file));
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
+            fileBackedTasksManager = new FileBackedTasksManager(file);
+            List<String> lines = new ArrayList<>();
 
-        int i;
-        for (i = 1; i < lines.size(); i++) {
-            if (lines.get(i).isEmpty()) {
-                break;
+            while (bufferedReader.ready()) {
+                lines.add(bufferedReader.readLine());
             }
 
-            Task task = fileBackedTasksManager.fromString(lines.get(i));
+            int i;
+            for (i = 1; i < lines.size(); i++) {
+                if (lines.get(i).isEmpty()) {
+                    break;
+                }
 
-            if (task.getType().equals(TaskTypes.SUBTASK.name())) {
-                fileBackedTasksManager.subTasks.put(task.getId(), (Subtask) task);
-            } else if (task.getType().equals(TaskTypes.EPIC.name())) {
-                fileBackedTasksManager.epics.put(task.getId(), (Epic) task);
-            } else {
-                fileBackedTasksManager.tasks.put(task.getId(), task);
+                Task task = fileBackedTasksManager.fromString(lines.get(i));
+
+                if (task.getType().equals(TaskTypes.SUBTASK.name())) {
+                    fileBackedTasksManager.subTasks.put(task.getId(), (Subtask) task);
+                } else if (task.getType().equals(TaskTypes.EPIC.name())) {
+                    fileBackedTasksManager.epics.put(task.getId(), (Epic) task);
+                } else {
+                    fileBackedTasksManager.tasks.put(task.getId(), task);
+                }
             }
+
+            List<Integer> history;
+
+            try {
+                history = historyFromString(lines.get(i + 1));
+
+                for (Integer id : history) {
+                    fileBackedTasksManager.getTaskById(id);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                e.getMessage();
+            }
+        } catch (IOException e) {
+            throw new ManagerSaveException();
         }
 
-        List<Integer> history = historyFromString(lines.get(i + 1));
-
-        for (Integer id : history) {
-            fileBackedTasksManager.getTaskById(id);
+        for (Epic epic : fileBackedTasksManager.getEpics().values()) {
+            epic.changeStatus();
+            epic.calculateEndTime();
         }
 
         return fileBackedTasksManager;
@@ -115,7 +118,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         for (Task task : tasks) {
-            result.append(task + ",");
+            result.append(task.getId() + ",");
         }
 
         result.deleteCharAt(result.length() - 1);
@@ -133,79 +136,221 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return ids;
     }
 
-    private void save() {
-        if (Files.exists(tasksFile)) {
-            try (FileWriter writer = new FileWriter(String.valueOf(tasksFile))) {
-                List<Task> tasks = getAllTasks();
-                writer.write("id,type,name,status,description,epic\n");
+    public void setTasksFile(String tasksFile) {
+        this.tasksFile = Paths.get(tasksFile);
+    }
 
-                for (Task task : tasks) {
-                    writer.write(toString(task));
+    public TreeSet<Task> getPrioritizedTasks() {
+        return treeSet;
+    }
+
+    public void sortPrioritizedTasks() {
+        for (Task task : getTasks().values()) {
+            treeSet.add(task);
+        }
+
+        for (Task task : getSubTasks().values()) {
+            treeSet.add(task);
+        }
+
+        treeSet.stream().sorted();
+    }
+
+    private void checkIntersection() throws IntersectionIntervalException {
+        TreeSet<Task> tasks = getPrioritizedTasks();
+        List<Task> sortedList = new ArrayList<>();
+
+        for (Task task : tasks) {
+            sortedList.add(task);
+        }
+
+        for (int i = 0; i < sortedList.size(); i++) {
+            Task currentTask = sortedList.get(i);
+            for (int j = 0; j < sortedList.size(); j++) {
+                if (currentTask == sortedList.get(j)) {
+                    continue;
                 }
+                LocalDateTime firstStart = currentTask.getStartTime();
+                LocalDateTime firstEnd = currentTask.getEndTime();
+                LocalDateTime secondStart = sortedList.get(j).getStartTime();
+                LocalDateTime secondEnd = sortedList.get(j).getEndTime();
 
-                writer.write("\n");
-                writer.write(historyToString(super.getHistoryManager()));
-            } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    if (firstStart.isAfter(secondEnd) || firstEnd.isBefore(secondStart)) {
+                        continue;
+                    } else if (firstStart.isAfter(secondStart) && secondEnd.isAfter(firstStart)
+                            || firstEnd.isBefore(firstStart) && secondEnd.isAfter(firstEnd)) {
+                        throw new IntersectionIntervalException("Пересечение выполнения задач!");
+                    }
+                } catch (IntersectionIntervalException e) {
+                    System.out.println(e.getMessage());
+                }
             }
-        } else {
-            System.out.println("Файл не существует");
+        }
+    }
+
+    private void save() {
+        try (FileWriter writer = new FileWriter(String.valueOf(tasksFile))) {
+            List<Task> tasks = getAllTasks();
+            writer.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
+
+            for (Task task : tasks) {
+                writer.write(toString(task));
+            }
+
+            writer.write("\n");
+            writer.write(historyToString(super.getHistoryManager()));
+        } catch (IOException e) {
+            throw new ManagerSaveException();
         }
     }
 
     private String toString(Task task) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy-HH:mm");
         int id = task.getId();
         String type = task.getType();
         String name = task.getName();
-        String status = task.getStatus();
+        String status = task.getStatus() + "";
         String description = task.getDescription();
+        String duration = String.valueOf(task.getDuration());
+        String startTime;
+        String endTime;
         String text;
+
+        if (task.getStartTime() == null) {
+            startTime = "ОТСУТСТВУЕТ";
+        } else {
+            startTime = task.getStartTime().format(formatter);
+        }
+
+        if (task.getEndTime() == null) {
+            endTime = "ОТСУТСТВУЕТ";
+        } else {
+            endTime = task.getEndTime().format(formatter);
+        }
+
 
         if (task.getClass() == Subtask.class) {
             int epicId = task.getEpicId();
-            text = id + "," + type + "," + name + "," + status + "," + description + "," + epicId + "\n";
+            text = id + "," + type + "," + name + "," + status + "," + description + "," + epicId + "," + startTime + "," +
+                    duration + "," + endTime + "\n";
         } else {
-            text = id + "," + type + "," + name + "," + status + "," + description + "," + "\n";
+            text = id + "," + type + "," + name + "," + status + "," + description + "," + startTime + "," +
+                    duration + "," + endTime + "\n";
         }
 
         return text;
     }
 
     private Task fromString(String value) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy-HH:mm");
         String[] array = value.split(",");
 
+        String status = array[STATUS_INDEX];
         String name = array[NAME_INDEX];
         String description = array[DESCRIPTION_INDEX];
         int id = Integer.parseInt(array[ID_INDEX]);
         String type = array[TYPE_INDEX];
+        String startTimeInString;
+        long duration;
+        String endTimeInString;
+
+        if (type.equals("SUBTASK")) {
+            startTimeInString = array[START_TIME_INDEX];
+            duration = Long.parseLong(array[DURATION_INDEX]);
+            endTimeInString = array[END_TIME_INDEX];
+        } else {
+            startTimeInString = array[START_TIME_INDEX - 1];
+            duration = Long.parseLong(array[DURATION_INDEX - 1]);
+            endTimeInString = array[END_TIME_INDEX - 1];
+        }
+
+        if (endTimeInString.equals("ОТСУТСТВУЕТ")) {
+            endTimeInString = "01.01.01-01:01";
+        }
+
+        if (startTimeInString.equals("ОТСУТСТВУЕТ")) {
+            startTimeInString = "01.01.01-01:01";
+        }
 
         if (type.equals(TaskTypes.SUBTASK.name())) {
             int epicId = Integer.parseInt(array[EPIC_ID_INDEX]);
             Epic current = super.getEpicId(epicId);
-            return new Subtask(name, description, current, id);
+            Subtask subtask = new Subtask(name, description, current, id);
+            LocalDateTime startTime = LocalDateTime.parse(startTimeInString, formatter);
+            LocalDateTime endTime = LocalDateTime.parse(endTimeInString, formatter);
+
+            subtask.setStartTime(startTime);
+            subtask.setDuration(duration);
+            subtask.changeStatus(Status.valueOf(status));
+
+            return subtask;
         } else if (type.equals(TaskTypes.EPIC.name())) {
-            return new Epic(name, description, id);
+            Epic epic = new Epic(name, description, id);
+
+            LocalDateTime startTime = LocalDateTime.parse(startTimeInString, formatter);
+            LocalDateTime endTime = LocalDateTime.parse(endTimeInString, formatter);
+
+            epic.setStartTime(startTime);
+            epic.setDuration(duration);
+
+            return epic;
         } else {
-            return new Task(name, description, id);
+            Task task = new Task(name, description, id);
+
+            LocalDateTime startTime = LocalDateTime.parse(startTimeInString, formatter);
+            LocalDateTime endTime = LocalDateTime.parse(endTimeInString, formatter);
+
+            task.setStartTime(startTime);
+            task.setDuration(duration);
+            task.changeStatus(Status.valueOf(status));
+
+            return task;
         }
     }
 
     @Override
-    public void addTask(Task task) {
+    public int addTask(Task task) {
         super.addTask(task);
         save();
+        sortPrioritizedTasks();
+
+        try {
+            checkIntersection();
+        } catch (IntersectionIntervalException e) {
+            throw new RuntimeException(e);
+        }
+
+        return task.getId();
     }
 
     @Override
-    public void addSub(Subtask subTask) {
+    public int addSub(Subtask subTask) {
         super.addSub(subTask);
         save();
+        sortPrioritizedTasks();
+
+        try {
+            checkIntersection();
+        } catch (IntersectionIntervalException e) {
+            throw new RuntimeException(e);
+        }
+
+        return subTask.getId();
     }
 
     @Override
-    public void addEpic(Epic epicTask) {
+    public int addEpic(Epic epicTask) {
         super.addEpic(epicTask);
         save();
+
+        try {
+            checkIntersection();
+        } catch (IntersectionIntervalException e) {
+            throw new RuntimeException(e);
+        }
+
+        return epicTask.getId();
     }
 
     @Override
