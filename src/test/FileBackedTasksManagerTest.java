@@ -1,15 +1,21 @@
 package test;
 
+import exception.IntersectionIntervalException;
 import exception.ManagerSaveException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import service.impl.FileBackedTasksManager;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
     String path;
@@ -30,48 +36,22 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
     }
 
     @Test
-    public void taskManagerShouldContainOneTask() {
-        super.taskManagerShouldContainOneTask();
-    }
+    public void taskManagerShouldThrowExceptionWithTwoIntersectionTasks() {
+        Task task = new Task("task", "task");
+        Task task1 = new Task("task1", "task1");
 
-    @Test
-    public void taskManagerShouldContainOneEpic() {
-        super.taskManagerShouldContainOneEpic();
-    }
+        task.setDuration(20L);
+        task1.setDuration(30L);
 
-    @Test
-    public void taskManagerShouldContainOneSubtask() {
-        super.taskManagerShouldContainOneSubtask();
-    }
+        task.setStartTime(LocalDateTime.now());
+        task1.setStartTime(LocalDateTime.now().plusMinutes(10L));
 
-    @Test
-    public void taskManagerShouldContainThreeTasks() {
-        super.taskManagerShouldContainThreeTasks();
-    }
+        RuntimeException e = assertThrows(RuntimeException.class, () -> {
+            taskManager.addTask(task);
+            taskManager.addTask(task1);
+        });
 
-    @Test
-    public void taskManagerShouldContainNullTasks() {
-        super.taskManagerShouldContainNullTasks();
-    }
-
-    @Test
-    public void taskManagerShouldRemoveTaskWithOneId() {
-        super.taskManagerShouldRemoveTaskWithOneId();
-    }
-
-    @Test
-    public void testGetTaskByIdWithEmptyTaskManager() {
-        super.testGetTaskByIdWithEmptyTaskManager();
-    }
-
-    @Test
-    public void testGetAllTasksWithEmptyTaskManager() {
-        super.testGetAllTasksWithEmptyTaskManager();
-    }
-
-    @Test
-    public void removeEpicWithSubtask() {
-        super.removeEpicWithSubtask();
+        assertEquals("exception.IntersectionIntervalException: Пересечение выполнения задач!", e.getMessage());
     }
 
     @Test

@@ -15,49 +15,4 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     public void afterEach() {
         super.taskManager = null;
     }
-
-    @Test
-    public void taskManagerShouldContainOneTask() {
-        super.taskManagerShouldContainOneTask();
-    }
-
-    @Test
-    public void taskManagerShouldContainOneEpic() {
-        super.taskManagerShouldContainOneEpic();
-    }
-
-    @Test
-    public void taskManagerShouldContainOneSubtask() {
-        super.taskManagerShouldContainOneSubtask();
-    }
-
-    @Test
-    public void taskManagerShouldContainThreeTasks() {
-        super.taskManagerShouldContainThreeTasks();
-    }
-
-    @Test
-    public void taskManagerShouldContainNullTasks() {
-        super.taskManagerShouldContainNullTasks();
-    }
-
-    @Test
-    public void taskManagerShouldRemoveTaskWithOneId() {
-        super.taskManagerShouldRemoveTaskWithOneId();
-    }
-
-    @Test
-    public void testGetTaskByIdWithEmptyTaskManager() {
-        super.testGetTaskByIdWithEmptyTaskManager();
-    }
-
-    @Test
-    public void testGetAllTasksWithEmptyTaskManager() {
-        super.testGetAllTasksWithEmptyTaskManager();
-    }
-
-    @Test
-    public void removeEpicWithSubtask() {
-        super.removeEpicWithSubtask();
-    }
 }

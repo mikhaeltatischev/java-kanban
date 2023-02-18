@@ -175,15 +175,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 LocalDateTime secondStart = sortedList.get(j).getStartTime();
                 LocalDateTime secondEnd = sortedList.get(j).getEndTime();
 
-                try {
-                    if (firstStart.isAfter(secondEnd) || firstEnd.isBefore(secondStart)) {
-                        continue;
-                    } else if (firstStart.isAfter(secondStart) && secondEnd.isAfter(firstStart)
-                            || firstEnd.isBefore(firstStart) && secondEnd.isAfter(firstEnd)) {
-                        throw new IntersectionIntervalException("Пересечение выполнения задач!");
-                    }
-                } catch (IntersectionIntervalException e) {
-                    System.out.println(e.getMessage());
+                if (firstStart.isAfter(secondEnd) || firstEnd.isBefore(secondStart)) {
+                    continue;
+                } else if (firstStart.isAfter(secondStart) && secondEnd.isAfter(firstStart)
+                        || firstEnd.isBefore(firstStart) && secondEnd.isAfter(firstEnd)) {
+                    throw new IntersectionIntervalException("Пересечение выполнения задач!");
                 }
             }
         }
