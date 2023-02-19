@@ -1,6 +1,5 @@
 package test;
 
-import exception.IntersectionIntervalException;
 import exception.ManagerSaveException;
 import model.Epic;
 import model.Subtask;
@@ -22,7 +21,7 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        path = "src\\file\\FileForMethods.txt";
+        path = "src//file//FileForMethods.txt";
         try {
             super.taskManager = new FileBackedTasksManager(path);
         } catch (IOException e) {
@@ -45,6 +44,8 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
         task.setStartTime(LocalDateTime.now());
         task1.setStartTime(LocalDateTime.now().plusMinutes(10L));
+        task.calculateEndTime();
+        task1.calculateEndTime();
 
         RuntimeException e = assertThrows(RuntimeException.class, () -> {
             taskManager.addTask(task);
@@ -56,10 +57,10 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     public void testLoadFromFileAndSaveInFileWithThreeTasks() throws IOException {
-        String newPath = "src\\file\\fileWithThreeTasks.txt";
+        String newPath = "src//file//fileWithThreeTasks.txt";
 
         try {
-            super.taskManager = new FileBackedTasksManager(newPath);
+            taskManager = new FileBackedTasksManager(newPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -81,7 +82,7 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
         FileBackedTasksManager fileBackedTasksManager;
 
 
-        fileBackedTasksManager = FileBackedTasksManager.loadFromFile("src\\file\\fileWithThreeTasks.txt");
+        fileBackedTasksManager = FileBackedTasksManager.loadFromFile("src//file//fileWithThreeTasks.txt");
 
         Assertions.assertEquals("task2", fileBackedTasksManager.getTaskById(idTask2).getName());
         Assertions.assertEquals("task1", fileBackedTasksManager.getTaskById(idTask1).getName());
@@ -94,25 +95,23 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     public void testLoadFromFileWithEmptyFile() {
-        FileBackedTasksManager fileBackedTasksManager;
-
         try {
-            fileBackedTasksManager = FileBackedTasksManager.loadFromFile("src\\file\\EmptyTasksFile.txt");
+            taskManager = FileBackedTasksManager.loadFromFile("src//file//EmptyTasksFile.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        Assertions.assertEquals(0, fileBackedTasksManager.getAllTasks().size());
+        Assertions.assertEquals(0, taskManager.getAllTasks().size());
     }
 
     @Test
     public void testThrowManagerSaveException() throws IOException {
         Task task = new Task("task", "task");
-        String file = "src\\file\\nonExistentFile.txt";
+        String file = "src//file//nonExistentFile.txt";
 
         try {
-            FileBackedTasksManager emptyTaskManager = new FileBackedTasksManager(file);
-            emptyTaskManager.addTask(task);
+            taskManager = new FileBackedTasksManager(file);
+            taskManager.addTask(task);
         } catch (ManagerSaveException e) {
             Assertions.assertEquals("Файла не существует", e.getMessage());
         }

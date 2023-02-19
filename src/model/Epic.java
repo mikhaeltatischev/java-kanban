@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
     private ArrayList<Subtask> subTasks;
@@ -10,37 +11,33 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
         subTasks = new ArrayList<>();
-        type = TaskTypes.EPIC;
+        type = TaskType.EPIC;
     }
 
     public Epic(String name, String description, int id) {
         super(name, description, id);
         subTasks = new ArrayList<>();
-        type = TaskTypes.EPIC;
+        type = TaskType.EPIC;
     }
 
     @Override
     public LocalDateTime getStartTime() {
-        try {
-            startTime = subTasks.get(0).getStartTime();
+        if (subTasks.size() == 0) {
+            return null;
+        }
+        startTime = subTasks.get(0).getStartTime();
 
-            for (Subtask sub : subTasks) {
-                if (startTime.isAfter(sub.getStartTime())) {
-                    startTime = sub.getStartTime();
-                }
+        for (Subtask sub : subTasks) {
+            if (startTime == null || startTime.isAfter(sub.getStartTime())) {
+                startTime = sub.getStartTime();
             }
-        } catch (NullPointerException e) {
-            e.getMessage();
-        } catch (IndexOutOfBoundsException e) {
-            e.getMessage();
-            startTime = LocalDateTime.of(01, 01, 01, 01, 01, 01);
         }
 
         return startTime;
     }
 
     @Override
-    public long getDuration() {
+    public Long getDuration() {
         duration = calculateDuration();
 
         return duration;
@@ -48,8 +45,17 @@ public class Epic extends Task {
 
     public long calculateDuration() {
         long time = 0;
+
+        if (subTasks.size() == 0) {
+            return 0;
+        }
+
         for (Subtask sub : subTasks) {
-            time += sub.getDuration();
+            if (sub.getDuration() == null) {
+                time += 0;
+            } else {
+                time += sub.getDuration();
+            }
         }
 
         return time;
@@ -61,18 +67,13 @@ public class Epic extends Task {
     }
 
     public LocalDateTime calculateEndTime() {
-        try {
-            endTime = startTime.plusMinutes(getDuration());
-        } catch (NullPointerException e) {
-            e.getMessage();
-        }
+        endTime = startTime.plusMinutes(getDuration());
 
         return endTime;
     }
 
     public void changeStatus() {
         int newStatusCounter = 0;
-        int inProgressStatusCounter = 0;
         int doneStatusCounter = 0;
 
         for (Subtask sub : subTasks) {
@@ -80,21 +81,19 @@ public class Epic extends Task {
                 newStatusCounter++;
             } else if (sub.getStatus().equals(Status.DONE)) {
                 doneStatusCounter++;
-            } else {
-                inProgressStatusCounter++;
             }
         }
 
         if (newStatusCounter == subTasks.size()) {
-            changeStatusToNew();
+            changeStatus(Status.NEW);
         } else if (doneStatusCounter == subTasks.size()) {
-            changeStatusToDone();
+            changeStatus(Status.DONE);
         } else {
-            changeStatusToInProgress();
+            changeStatus(Status.IN_PROGRESS);
         }
     }
 
-    public ArrayList<Subtask> getSubTasksForEpic() {
+    public List<Subtask> getSubTasksForEpic() {
         return subTasks;
     }
 

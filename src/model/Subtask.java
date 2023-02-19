@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
     private Epic epicTask;
 
@@ -7,14 +9,23 @@ public class Subtask extends Task {
         super(name, description);
         this.epicTask = epicTask;
         this.epicTask.addSubTaskToList(this);
-        type = TaskTypes.SUBTASK;
+        type = TaskType.SUBTASK;
     }
 
     public Subtask(String name, String description, Epic epicTask, int id) {
         super(name, description, id);
         this.epicTask = epicTask;
         this.epicTask.addSubTaskToList(this);
-        type = TaskTypes.SUBTASK;
+        type = TaskType.SUBTASK;
+    }
+
+    public Subtask(String name, String description, Epic epicTask, int id, LocalDateTime startTime, Long duration) {
+        super(name, description, id);
+        this.epicTask = epicTask;
+        this.epicTask.addSubTaskToList(this);
+        this.startTime = startTime;
+        this.duration = duration;
+        type = TaskType.SUBTASK;
     }
 
     public Epic getEpicTask() {
@@ -27,18 +38,8 @@ public class Subtask extends Task {
     }
 
     @Override
-    public void changeStatusToInProgress() {
-        super.changeStatusToInProgress();
-        epicTask.changeStatus();
-    }
-
-    public void changeStatusToDone() {
-        super.changeStatusToDone();
-        epicTask.changeStatus();
-    }
-
-    public void changeStatusToNew() {
-        super.changeStatusToNew();
+    public void changeStatus(Status status) {
+        super.changeStatus(status);
         epicTask.changeStatus();
     }
 }

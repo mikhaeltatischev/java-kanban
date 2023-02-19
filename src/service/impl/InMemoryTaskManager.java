@@ -8,6 +8,7 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -152,7 +153,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         for (Integer id : epics.keySet()) {
             if (id == removeTaskId) {
-                ArrayList<Subtask> subtasksForEpic = epics.get(id).getSubTasksForEpic();
+                List<Subtask> subtasksForEpic = epics.get(id).getSubTasksForEpic();
                 for (Subtask subtask : subtasksForEpic) {
                     subTasks.remove(subtask.getId());
                     historyManager.remove(subtask.getId());

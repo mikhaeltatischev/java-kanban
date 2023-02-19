@@ -1,24 +1,25 @@
 package model;
 
-import javax.swing.text.DateFormatter;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class Task implements Comparable<Task> {
-    protected TaskTypes type;
+    protected String name;
+    protected String description;
+    protected Status status;
+    protected int id;
+    protected TaskType type;
     protected LocalDateTime startTime;
-    protected long duration;
+    protected Long duration;
     protected LocalDateTime endTime;
-    private int id;
-    private String name;
-    private String description;
-    private Status status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         status = Status.NEW;
-        type = TaskTypes.TASK;
+        type = TaskType.TASK;
     }
 
     public Task(String name, String description, int id) {
@@ -26,10 +27,20 @@ public class Task implements Comparable<Task> {
         this.description = description;
         this.id = id;
         status = Status.NEW;
-        type = TaskTypes.TASK;
+        type = TaskType.TASK;
     }
 
-    public long getDuration() {
+    public Task(String name, String description, int id, LocalDateTime startTime, long duration) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.startTime = startTime;
+        this.duration = duration;
+        status = Status.NEW;
+        type = TaskType.TASK;
+    }
+
+    public Long getDuration() {
         return duration;
     }
 
@@ -41,25 +52,26 @@ public class Task implements Comparable<Task> {
         return startTime;
     }
 
-    public LocalDateTime getEndTime() {
-        endTime = calculateEndTime();
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
 
-        return endTime;
+    public LocalDateTime getEndTime() {
+        if (duration == null) {
+            if (startTime == null) {
+                return null;
+            } else {
+                return startTime;
+            }
+        } else {
+            return calculateEndTime();
+        }
     }
 
     public LocalDateTime calculateEndTime() {
-        try {
-            endTime = startTime.plusMinutes(duration);
-        } catch (NullPointerException e) {
-            endTime = startTime;
-            e.getMessage();
-        }
+        endTime = startTime.plusMinutes(duration);
 
         return endTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
     }
 
     @Override
@@ -75,24 +87,12 @@ public class Task implements Comparable<Task> {
         this.id = id;
     }
 
-    public void changeStatusToInProgress() {
-        this.status = Status.IN_PROGRESS;
-    }
-
-    public void changeStatusToDone() {
-        this.status = Status.DONE;
-    }
-
-    public void changeStatusToNew() {
-        this.status = Status.NEW;
-    }
-
     public String getName() {
         return name;
     }
 
-    public String getType() {
-        return type + "";
+    public TaskType getType() {
+        return type;
     }
 
     public Status getStatus() {
@@ -112,11 +112,22 @@ public class Task implements Comparable<Task> {
     }
 
     @Override
-    public int compareTo(Task o) {
-        ZonedDateTime first = ZonedDateTime.of(startTime, ZoneId.systemDefault());
-        ZonedDateTime second = ZonedDateTime.of(o.startTime, ZoneId.systemDefault());
-        long timeFirstTask = first.toInstant().toEpochMilli();
-        long timeSecondTask = second.toInstant().toEpochMilli();
-        return (int) (timeFirstTask - timeSecondTask);
+    public int compareTo(Task task) {
+        if (startTime != null && task.startTime != null) {
+            ZonedDateTime first = ZonedDateTime.of(startTime, ZoneId.systemDefault());
+            ZonedDateTime second = ZonedDateTime.of(task.startTime, ZoneId.systemDefault());
+            long timeFirstTask = first.toInstant().toEpochMilli();
+            long timeSecondTask = second.toInstant().toEpochMilli();
+
+            return (int) (timeFirstTask - timeSecondTask);
+        } else if (startTime == null && task.startTime == null) {
+            return this.getId() - task.getId();
+        } else {
+            if (startTime == null) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
     }
 }

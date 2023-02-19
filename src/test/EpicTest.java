@@ -30,12 +30,12 @@ class EpicTest {
 
         assertEquals(Status.NEW, epic.getStatus());
     }
-    
+
     @Test
     public void epicShouldChangeStatusToInProgressWithOneInProgressSubtask() {
         Subtask subtask = new Subtask("Subtask", "subtask", epic);
 
-        subtask.changeStatusToInProgress();
+        subtask.changeStatus(Status.IN_PROGRESS);
         epic.changeStatus();
 
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
@@ -45,7 +45,7 @@ class EpicTest {
     public void epicShouldChangeStatusToDoneWithOneDoneSubtask() {
         Subtask subtask = new Subtask("Subtask", "subtask", epic);
 
-        subtask.changeStatusToDone();
+        subtask.changeStatus(Status.DONE);
         epic.changeStatus();
 
         assertEquals(Status.DONE, epic.getStatus());
@@ -56,10 +56,10 @@ class EpicTest {
         Subtask subtask1 = new Subtask("Subtask1", "subtask", epic);
         Subtask subtask2 = new Subtask("Subtask2", "subtask", epic);
 
-        subtask1.changeStatusToDone();
+        subtask1.changeStatus(Status.DONE);
         epic.changeStatus();
 
-        subtask2.changeStatusToNew();
+        subtask2.changeStatus(Status.NEW);
         epic.changeStatus();
 
         assertEquals(Status.IN_PROGRESS, epic.getStatus());
