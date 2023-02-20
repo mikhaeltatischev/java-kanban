@@ -6,10 +6,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class Task implements Comparable<Task> {
+    protected int id;
     protected String name;
     protected String description;
     protected Status status;
-    protected int id;
     protected TaskType type;
     protected LocalDateTime startTime;
     protected Long duration;

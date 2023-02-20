@@ -5,29 +5,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subTasks;
+    private ArrayList<Subtask> subtasks;
     private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
-        subTasks = new ArrayList<>();
+        subtasks = new ArrayList<>();
         type = TaskType.EPIC;
     }
 
     public Epic(String name, String description, int id) {
         super(name, description, id);
-        subTasks = new ArrayList<>();
+        subtasks = new ArrayList<>();
         type = TaskType.EPIC;
     }
 
     @Override
     public LocalDateTime getStartTime() {
-        if (subTasks.size() == 0) {
+        if (subtasks.size() == 0) {
             return null;
         }
-        startTime = subTasks.get(0).getStartTime();
+        startTime = subtasks.get(0).getStartTime();
 
-        for (Subtask sub : subTasks) {
+        for (Subtask sub : subtasks) {
             if (startTime == null || startTime.isAfter(sub.getStartTime())) {
                 startTime = sub.getStartTime();
             }
@@ -43,14 +43,14 @@ public class Epic extends Task {
         return duration;
     }
 
-    public long calculateDuration() {
+    private long calculateDuration() {
         long time = 0;
 
-        if (subTasks.size() == 0) {
+        if (subtasks.size() == 0) {
             return 0;
         }
 
-        for (Subtask sub : subTasks) {
+        for (Subtask sub : subtasks) {
             if (sub.getDuration() == null) {
                 time += 0;
             } else {
@@ -76,7 +76,7 @@ public class Epic extends Task {
         int newStatusCounter = 0;
         int doneStatusCounter = 0;
 
-        for (Subtask sub : subTasks) {
+        for (Subtask sub : subtasks) {
             if (sub.getStatus().equals(Status.NEW)) {
                 newStatusCounter++;
             } else if (sub.getStatus().equals(Status.DONE)) {
@@ -84,9 +84,9 @@ public class Epic extends Task {
             }
         }
 
-        if (newStatusCounter == subTasks.size()) {
+        if (newStatusCounter == subtasks.size()) {
             changeStatus(Status.NEW);
-        } else if (doneStatusCounter == subTasks.size()) {
+        } else if (doneStatusCounter == subtasks.size()) {
             changeStatus(Status.DONE);
         } else {
             changeStatus(Status.IN_PROGRESS);
@@ -94,14 +94,14 @@ public class Epic extends Task {
     }
 
     public List<Subtask> getSubTasksForEpic() {
-        return subTasks;
+        return subtasks;
     }
 
     public void addSubTaskToList(Subtask subtask) {
-        subTasks.add(subtask);
+        subtasks.add(subtask);
     }
 
     public void clearSubTasks() {
-        subTasks.clear();
+        subtasks.clear();
     }
 }

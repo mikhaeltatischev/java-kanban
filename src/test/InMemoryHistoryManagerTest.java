@@ -17,49 +17,4 @@ public class InMemoryHistoryManagerTest extends HistoryManagerTest<InMemoryHisto
     public void beforeEach() {
         super.taskManager = new InMemoryHistoryManager();
     }
-
-    @Test
-    public void testAdd() {
-        super.testAdd();
-    }
-
-    @Test
-    public void testRemove() {
-        super.testRemove();
-    }
-
-    @Test
-    public void testAllRemove() {
-        super.testAllRemove();
-    }
-
-    @Test
-    public void testGetHistory() {
-        super.testGetHistory();
-    }
-
-    @Test
-    public void testGetHistoryWithEmptyHistoryOfTasks() {
-        super.testGetHistoryWithEmptyHistoryOfTasks();
-    }
-
-    @Test
-    public void testHistoryWithDuplicates() {
-        super.testHistoryWithDuplicates();
-    }
-
-    @Test
-    public void testRemoveFromStartHistory() {
-        super.testRemoveFromStartHistory();
-    }
-
-    @Test
-    public void testRemoveFromAverageHistory() {
-        super.testRemoveFromAverageHistory();
-    }
-
-    @Test
-    public void testRemoveFromEndHistory() {
-        super.testRemoveFromEndHistory();
-    }
 }

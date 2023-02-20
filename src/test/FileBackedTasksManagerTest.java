@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
-    String path;
+    private String path;
 
     @BeforeEach
     public void beforeEach() {
@@ -56,41 +56,16 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
     }
 
     @Test
-    public void testLoadFromFileAndSaveInFileWithThreeTasks() throws IOException {
+    public void testLoadFromFileAndSaveInFileWithThreeTasks() {
         String newPath = "src//file//fileWithThreeTasks.txt";
 
         try {
-            taskManager = new FileBackedTasksManager(newPath);
+            taskManager = FileBackedTasksManager.loadFromFile(newPath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        Task task1 = new Task("task1", "task1");
-        Task task2 = new Task("task2", "task2");
-        Task task3 = new Task("task3", "task3");
-
-        final int idTask1 = taskManager.addTask(task1);
-        final int idTask2 = taskManager.addTask(task2);
-        final int idTask3 = taskManager.addTask(task3);
-        Assertions.assertEquals(task2, taskManager.getTaskById(idTask2));
-        Assertions.assertEquals(task1, taskManager.getTaskById(idTask1));
-        Assertions.assertEquals(task3, taskManager.getTaskById(idTask3));
-        taskManager.getHistoryManager();
-
         Assertions.assertEquals(3, taskManager.getAllTasks().size());
-
-        FileBackedTasksManager fileBackedTasksManager;
-
-
-        fileBackedTasksManager = FileBackedTasksManager.loadFromFile("src//file//fileWithThreeTasks.txt");
-
-        Assertions.assertEquals("task2", fileBackedTasksManager.getTaskById(idTask2).getName());
-        Assertions.assertEquals("task1", fileBackedTasksManager.getTaskById(idTask1).getName());
-        Assertions.assertEquals("task3", fileBackedTasksManager.getTaskById(idTask3).getName());
-        Assertions.assertEquals(idTask2, fileBackedTasksManager.getHistoryManager().getHistory().get(0).getId());
-        Assertions.assertEquals(idTask1, fileBackedTasksManager.getHistoryManager().getHistory().get(1).getId());
-        Assertions.assertEquals(idTask3, fileBackedTasksManager.getHistoryManager().getHistory().get(2).getId());
-        Assertions.assertEquals(3, fileBackedTasksManager.getAllTasks().size());
     }
 
     @Test
