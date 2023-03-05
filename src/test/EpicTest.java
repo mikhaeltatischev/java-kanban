@@ -3,7 +3,6 @@ package test;
 import model.Epic;
 import model.Status;
 import model.Subtask;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +71,7 @@ class EpicTest {
 
         epic.clearSubTasks();
 
-        assertEquals(0, epic.getSubTasksForEpic().size());
+        assertEquals(0, epic.getSubtasksForEpic().size());
     }
 
     @Test
@@ -80,7 +79,7 @@ class EpicTest {
         Subtask subtask1 = new Subtask("Subtask1", "subtask", epic);
         Subtask subtask2 = new Subtask("Subtask2", "subtask", epic);
 
-        assertEquals(2, epic.getSubTasksForEpic().size());
+        assertEquals(2, epic.getSubtasksForEpic().size());
     }
 
     @Test

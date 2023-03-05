@@ -13,13 +13,27 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private static int id = 1;
-    protected final HashMap<Integer, Task> tasks = new HashMap<>();
-    protected final HashMap<Integer, Subtask> subTasks = new HashMap<>();
-    protected final HashMap<Integer, Epic> epics = new HashMap<>();
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, Subtask> subTasks;
+    protected final HashMap<Integer, Epic> epics;
+    private HistoryManager historyManager;
+
+    public InMemoryTaskManager() {
+        tasks = new HashMap<>();
+        subTasks = new HashMap<>();
+        epics = new HashMap<>();
+        historyManager = Managers.getDefaultHistory();
+    }
 
     public HistoryManager getHistoryManager() {
         return historyManager;
+    }
+
+    @Override
+    public List<Subtask> getEpicSubTasks(int epicId) {
+        Epic epic = (Epic) getTaskById(epicId);
+        List<Subtask> listSubtasks = epic.getSubtasksForEpic();
+        return listSubtasks;
     }
 
     @Override
@@ -113,27 +127,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task, int taskId) {
-        if (tasks.containsValue(taskId)) {
-            tasks.put(taskId, task);
+    public void updateTask(Task task) {
+        if (tasks.containsValue(task)) {
+            tasks.put(task.getId(), task);
         }
 
         System.out.println("Задача обновлена");
     }
 
     @Override
-    public void updateSub(Subtask subtask, int subtaskId) {
-        if (subTasks.containsValue(subtaskId)) {
-            subTasks.put(subtaskId, subtask);
+    public void updateSub(Subtask subtask) {
+        if (subTasks.containsValue(subtask)) {
+            subTasks.put(subtask.getId(), subtask);
         }
 
         System.out.println("Задача обновлена");
     }
 
     @Override
-    public void updateEpic(Epic epic, int epicId) {
-        if (epics.containsValue(epicId)) {
-            epics.put(epicId, epic);
+    public void updateEpic(Epic epic) {
+        if (epics.containsValue(epic)) {
+            epics.put(epic.getId(), epic);
         }
 
         epic.changeStatus();
@@ -153,7 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         for (Integer id : epics.keySet()) {
             if (id == removeTaskId) {
-                List<Subtask> subtasksForEpic = epics.get(id).getSubTasksForEpic();
+                List<Subtask> subtasksForEpic = epics.get(id).getSubtasksForEpic();
                 for (Subtask subtask : subtasksForEpic) {
                     subTasks.remove(subtask.getId());
                     historyManager.remove(subtask.getId());

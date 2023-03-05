@@ -1,14 +1,15 @@
 package test;
 
-import exception.ManagerSaveException;
+import com.google.gson.Gson;
 import model.Epic;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.impl.FileBackedTasksManager;
+import server.KVServer;
+import service.impl.HttpTaskManager;
+import service.impl.Managers;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,22 +17,21 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
-    private String path;
+public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
+    KVServer kvServer;
+    Gson gson;
 
     @BeforeEach
-    public void beforeEach() {
-        path = "src//file//FileForMethods.txt";
-        try {
-            super.taskManager = new FileBackedTasksManager(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    void beforeEach() throws IOException, InterruptedException {
+        kvServer = new KVServer();
+        kvServer.start();
+        taskManager = Managers.getDefault();
+        gson = Managers.getDefaultGson();
     }
 
     @AfterEach
-    public void afterEach() {
-        super.taskManager = null;
+    void afterEach() {
+        kvServer.stop();
     }
 
     @Test
@@ -56,40 +56,27 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     }
 
     @Test
-    public void testLoadFromFileAndSaveInFileWithThreeTasks() {
-        String newPath = "src//file//fileWithThreeTasks.txt";
+    public void testLoadAndSaveWithThreeTasks() throws IOException, InterruptedException {
+        HttpTaskManager secondTaskManager;
+        Task task = new Task("Task", "task", 1, LocalDateTime.now().minusMinutes(100L), 5L);
+        Epic epic = new Epic("Epic", "epic", 2);
+        Subtask subtask = new Subtask("Subtask", "subtask", 3, LocalDateTime.now(), 2L, epic);
+        taskManager.addTask(task);
+        taskManager.addEpic(epic);
+        taskManager.addSub(subtask);
 
-        try {
-            taskManager = taskManager.load(newPath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        secondTaskManager = taskManager.load("http://localhost:8078");
 
-        Assertions.assertEquals(3, taskManager.getAllTasks().size());
+        assertEquals(3, secondTaskManager.getAllTasks().size());
+        assertEquals(0, secondTaskManager.getHistoryManager().getHistory().size());
     }
 
     @Test
-    public void testLoadFromFileWithEmptyFile() {
-        try {
-            taskManager = taskManager.load("src//file//EmptyTasksFile.txt");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void testLoadEmptyData() {
+        taskManager.load("http://localhost:8078");
 
-        Assertions.assertEquals(0, taskManager.getAllTasks().size());
-    }
-
-    @Test
-    public void testThrowManagerSaveException() throws IOException {
-        Task task = new Task("task", "task");
-        String file = "src//file//nonExistentFile.txt";
-
-        try {
-            taskManager = new FileBackedTasksManager(file);
-            taskManager.addTask(task);
-        } catch (ManagerSaveException e) {
-            Assertions.assertEquals("Файла не существует", e.getMessage());
-        }
+        assertEquals(0, taskManager.getAllTasks().size());
+        assertEquals(0, taskManager.getHistoryManager().getHistory().size());
     }
 
     @Test

@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private CustomLinkedList customLinkedList = new CustomLinkedList();
+    private CustomLinkedList customLinkedList;
+
+    public InMemoryHistoryManager() {
+        customLinkedList = new CustomLinkedList();
+    }
 
     @Override
     public int add(Task task) {

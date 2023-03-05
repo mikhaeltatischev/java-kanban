@@ -1,12 +1,12 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
-    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -67,8 +67,11 @@ public class Epic extends Task {
     }
 
     public LocalDateTime calculateEndTime() {
-        endTime = startTime.plusMinutes(getDuration());
-
+        if (startTime != null) {
+            endTime = startTime.plusMinutes(getDuration());
+        } else {
+            return null;
+        }
         return endTime;
     }
 
@@ -93,7 +96,7 @@ public class Epic extends Task {
         }
     }
 
-    public List<Subtask> getSubTasksForEpic() {
+    public List<Subtask> getSubtasksForEpic() {
         return subtasks;
     }
 
@@ -103,5 +106,31 @@ public class Epic extends Task {
 
     public void clearSubTasks() {
         subtasks.clear();
+    }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy-HH:mm");
+        String startTimeString = null;
+        String endTimeString = null;
+        String duration = null;
+
+
+        if (getStartTime() != null) {
+            startTimeString = getStartTime().format(formatter);
+        }
+
+        if (getEndTime() != null) {
+            endTimeString = getEndTime().format(formatter);
+        }
+
+        if (getDuration() != null) {
+            duration = String.valueOf(getDuration());
+        }
+
+        String text = getId() + "," + getType() + "," + getName() + "," + getStatus() + "," + getDescription() + ","
+                + startTimeString + "," + duration + "," + endTimeString + "\n";
+
+        return text;
     }
 }

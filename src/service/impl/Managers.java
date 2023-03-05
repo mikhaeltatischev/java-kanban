@@ -1,7 +1,13 @@
 package service.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import service.HistoryManager;
 import service.TaskManager;
+import typeAdapter.LocalDateTimeAdapter;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class Managers {
 
@@ -9,7 +15,19 @@ public class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public TaskManager getDefault() {
-        return new InMemoryTaskManager();
+    public static FileBackedTasksManager getDefaultFileBackedTasksManager() throws IOException {
+        return new FileBackedTasksManager("src//file//new.txt");
+    }
+
+    public static HttpTaskManager getDefault() throws IOException, InterruptedException {
+        return new HttpTaskManager("http://localhost:8078");
+    }
+
+    public static Gson getDefaultGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
+        Gson gson = gsonBuilder.create();
+
+        return gson;
     }
 }
