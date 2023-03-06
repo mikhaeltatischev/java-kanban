@@ -21,7 +21,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @BeforeEach
     public void beforeEach() {
-        path = "src//file//FileForMethods.txt";
+        path = "src//test//file//FileForMethods.txt";
         try {
             super.taskManager = new FileBackedTasksManager(path);
         } catch (IOException e) {
@@ -57,7 +57,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     public void testLoadFromFileAndSaveInFileWithThreeTasks() {
-        String newPath = "src//file//fileWithThreeTasks.txt";
+        String newPath = "src//test//file//fileWithThreeTasks.txt";
 
         try {
             taskManager = taskManager.load(newPath);
@@ -71,7 +71,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void testLoadFromFileWithEmptyFile() {
         try {
-            taskManager = taskManager.load("src//file//EmptyTasksFile.txt");
+            taskManager = taskManager.load("src//test//file//EmptyTasksFile.txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -82,7 +82,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @Test
     public void testThrowManagerSaveException() throws IOException {
         Task task = new Task("task", "task");
-        String file = "src//file//nonExistentFile.txt";
+        String file = "src//test//file//nonExistentFile.txt";
 
         try {
             taskManager = new FileBackedTasksManager(file);

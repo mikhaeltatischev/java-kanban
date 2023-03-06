@@ -1,9 +1,0 @@
-id,type,name,status,description,epic,startTime,duration,endTime
-1,TASK,task,NEW,task,18.02.23-22:06,60,18.02.23-23:06
-2,TASK,task1,NEW,task1,19.02.23-06:26,100,19.02.23-08:06
-3,TASK,task2,NEW,task2,19.02.23-04:46,20,19.02.23-05:06
-4,TASK,task3,NEW,task3,01.01.01-01:01,0,01.01.01-01:01
-5,EPIC,epic,IN_PROGRESS,epic,18.02.23-22:06,120,19.02.23-00:06
-6,SUBTASK,sub,IN_PROGRESS,sub,5,18.02.23-22:06,60,18.02.23-23:06
-7,SUBTASK,sub1,NEW,sub,5,18.02.23-22:06,60,18.02.23-23:06
-

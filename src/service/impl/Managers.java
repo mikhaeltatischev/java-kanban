@@ -3,8 +3,7 @@ package service.impl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import service.HistoryManager;
-import service.TaskManager;
-import typeAdapter.LocalDateTimeAdapter;
+import adapter.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ public class Managers {
     }
 
     public static FileBackedTasksManager getDefaultFileBackedTasksManager() throws IOException {
-        return new FileBackedTasksManager("src//file//new.txt");
+        return new FileBackedTasksManager("src//file//defaultFile.txt");
     }
 
     public static HttpTaskManager getDefault() throws IOException, InterruptedException {

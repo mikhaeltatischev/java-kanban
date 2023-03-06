@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    KVTaskClient client;
-    String url;
-    Gson gson;
+    private KVTaskClient client;
+    private String url;
+    private Gson gson;
 
     public HttpTaskManager(String url) throws IOException, InterruptedException {
         this.url = url;
@@ -54,7 +54,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     }
                 }
 
-                if (!history[0].isBlank()) {
+                if (jsonHistory.isJsonNull()) {
                     for (int i = 0; i < history.length; i++) {
                         Task currentTask = httpTaskManager.getTaskById(Integer.parseInt(history[i]));
 

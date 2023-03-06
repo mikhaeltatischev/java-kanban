@@ -32,7 +32,6 @@ public class KVServer {
     }
 
     private void load(HttpExchange h) throws IOException {
-        // TODO Добавьте получение значения по ключу
         try {
             System.out.println("\n/load");
             if (!hasAuth(h)) {
@@ -131,7 +130,12 @@ public class KVServer {
     }
 
     protected void sendText(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(UTF_8);
+        byte[] resp;
+        if (text == null) {
+            resp = new byte[0];
+        } else {
+            resp = text.getBytes(UTF_8);
+        }
         h.getResponseHeaders().add("Content-Type", "application/json");
         h.sendResponseHeaders(200, resp.length);
         h.getResponseBody().write(resp);

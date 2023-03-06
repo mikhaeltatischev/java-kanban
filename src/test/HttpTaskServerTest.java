@@ -36,7 +36,7 @@ public class HttpTaskServerTest {
     private TaskManager taskManager;
     private HttpClient httpClient;
     private Task task;
-    KVServer kvServer;
+    private KVServer kvServer;
 
     @BeforeEach
     void beforeEach() throws IOException, InterruptedException {
@@ -148,8 +148,8 @@ public class HttpTaskServerTest {
         List<Task> historyList = new ArrayList<>();
         taskManager.addTask(task);
         taskManager.addTask(task1);
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
+        taskManager.getTaskById(task.getId());
+        taskManager.getTaskById(task1.getId());
         historyList.add(task);
         historyList.add(task1);
 

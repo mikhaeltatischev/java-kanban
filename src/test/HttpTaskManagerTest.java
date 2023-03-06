@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
-    KVServer kvServer;
-    Gson gson;
+    private KVServer kvServer;
+    private Gson gson;
 
     @BeforeEach
     void beforeEach() throws IOException, InterruptedException {
