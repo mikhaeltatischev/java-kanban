@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.HttpTaskServer;
 import server.KVServer;
+import server.KVTaskClient;
 import service.TaskManager;
 import service.impl.Managers;
 

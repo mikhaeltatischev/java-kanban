@@ -12,8 +12,6 @@ import service.impl.Managers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -21,9 +19,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class HttpTaskServer {
     private final static int PORT = 8080;
 
-    TaskManager taskManager;
-    HttpServer server;
-    Gson gson;
+    private TaskManager taskManager;
+    private HttpServer server;
+    private Gson gson;
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
