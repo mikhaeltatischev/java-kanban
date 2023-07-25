@@ -1,2 +1,2 @@
 # java-kanban
-Repository for homework project.
+Таск-менеджер для отслеживания сроков, задач.
