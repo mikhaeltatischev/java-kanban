@@ -1,6 +1,0 @@
-id,type,name,status,description,epic,startTime,duration,endTime
-32,TASK,task3,NEW,task3,01.01.01-01:01,0,01.01.01-01:01
-30,TASK,task1,NEW,task1,01.01.01-01:01,0,01.01.01-01:01
-31,TASK,task2,NEW,task2,01.01.01-01:01,0,01.01.01-01:01
-
-31,30,32

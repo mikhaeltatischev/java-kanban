@@ -1,4 +1,0 @@
-id,type,name,status,description,epic,startTime,duration,endTime
-62,TASK,task,NEW,task,09.03.23-21:02,20,09.03.23-21:22
-63,TASK,task1,NEW,task1,09.03.23-21:12,30,09.03.23-21:42
-
